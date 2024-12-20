@@ -2,8 +2,14 @@ import openai
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
-# Замените на ваш токен OpenAI
-openai.api_key = "OPENAI_API_KEY"
+import os
+import openai
+from dotenv import load_dotenv
+
+load_dotenv()
+
+openai.api_key = os.environ.get("OPENAI_API_KEY")
+TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обрабатывает текстовые сообщения и отправляет их в OpenAI API."""
