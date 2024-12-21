@@ -1,17 +1,22 @@
 import openai
+import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
-
-import os
-import openai
 from dotenv import load_dotenv
 
+# Загрузка переменных окружения из файла .env
 load_dotenv()
 
+# Получение API ключа OpenAI из переменной окружения
 openai.api_key = os.environ.get("OPENAI_API_KEY")
+
+# Создание клиента OpenAI
+client = openai.OpenAI(api_key=openai.api_key)
+
+# Получение токена Telegram бота из переменной окружения
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
-
+# Ваша функция для обработки сообщений
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обрабатывает текстовые сообщения и отправляет их в OpenAI API."""
     user_message = update.message.text
@@ -21,7 +26,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(f"Отправляю запрос в OpenAI: {user_message}")
 
         # Отправка запроса к OpenAI API
-        client = openai.OpenAI(api_key=openai.api_key)
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -83,16 +87,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(f"Ошибка при обработке сообщения: {e}")
         await update.message.reply_text("Произошла ошибка при обработке вашего запроса.")
 
-
-# Замените на ваш токен Telegram бота
-TOKEN = "TELEGRAM_BOT_TOKEN"
-
+# Основная функция
 if __name__ == "__main__":
+    # Создание приложения и передача ему токена вашего бота
     application = ApplicationBuilder().token(TOKEN).build()
 
-    # Добавляем обработчик текстовых сообщений
+    # Обработчик текстовых сообщений
     message_handler = MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
     application.add_handler(message_handler)
 
-    # Запускаем бота
+    # Запуск бота
     application.run_polling()
