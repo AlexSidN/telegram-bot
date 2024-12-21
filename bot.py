@@ -11,6 +11,7 @@ load_dotenv()
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обрабатывает текстовые сообщения и отправляет их в OpenAI API."""
     user_message = update.message.text
